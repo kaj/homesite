@@ -1,0 +1,82 @@
+@use templates::statics::{lila_css, kratsbox_css, kratsbox_js};
+@use templates::image;
+@()
+
+<!doctype html>
+<html lang="sv">
+  <head>
+    <title>Rasmus &amp; Katarina</title>
+    <link rel="stylesheet" type="text/css" href="/s/@lila_css.name" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="/s/@kratsbox_js.name"
+	    async="async" defer="defer" onload="kratsbox('a.img')"></script>
+    <link rel="stylesheet" href="/s/@kratsbox_css.name" type="text/css" media="screen" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <h1>
+	<span id="katarina">Katarina</span>
+	<span id="och">&#xFE60;</span>
+	<span id="rasmus">Rasmus</span>
+	<span class="sub">3 Juli 2010</span>
+      </h1>
+      
+      <div id="images1">
+	@:image(2251, "Inmarsch. Foto: Fredrik Arnerup.")
+	@:image(2080, "Kyssen. Foto: Fredrik Arnerup.")
+	@:image(2757, "Brudpar på bro. Foto: Harald Barth.")
+      </div>
+      
+      <p class="when">Sedan den 3 juli i år 2010 är vi,
+      <a href="http://tygbittar.krats.se">Katarina</a> &amp;
+      <a href="http://rasmus.krats.se">Rasmus</a> Kaj, gifta.</p>
+
+      <div class="thanks">
+	<h2>Tack</h2>
+
+	<p>Till alla er som var med och gjorde vår stora dag till den
+	fantastiska dag det blev!</p>
+	
+	<ul>
+	  <li>Alla våra gäster</li>
+	  <li>Marsalken <a href="http://www.stacken.kth.se/~haba/">Harald</a>
+	    och tärnan <a href="http://caela.wordpress.com/">Caela</a></li>
+	  <li>Brudnäbbarna Lisen och Leona</li>
+	  <li>Toastmastern Mårten</li>
+	  <li><a href="http://www.alicia.nu/">Alicia</a> smidde ringarna</li>
+	  <li><a href="http://www.silvergrejs.se/">Noora</a> gjorde
+	  brudkronan</li>
+	  <li>Farmor Inga lånade ut halsbandet</li>
+	  <li>Musikerna <a href="http://www.75ore.se">Hanna och Ivan i 75 öre</a></li>
+	  <li>Vigselförättaren <a href="http://romantiskavigslar.se/">Anette Bernklo</a></li>
+	  <li><a href="http://www.enskedevardshus.se/">Enskede Värdshus</a></li>
+	  <li><a href="http://booraan.se/">Booraan Thai Spa Massage / Frisör</a></li>
+	  <li><a href="http://scaramouche.se/">Scaramouche</a></li>
+	  <li><a href="http://www.simbrasiden.se/">Simbra Siden</a></li>
+	  <li><a href="http://sidencarlson.se/">Siden-Carlsson</a></li>
+	</ul>
+      </div>
+      <div id="images2">
+	@:image(2418, "Brudparet. Foto: Harald Barth.")
+	@:image(2398, "Brudgumen. Foto: Harald Barth.")
+	@:image(2591, "Kusin Claudia. Foto: Harald Barth.")
+      </div>
+      <div id="images3">
+	@:image(2645, "Brudparet. Foto: Harald Barth.")
+	@:image(2666, "Bruden. Foto: Harald Barth.")
+	@:image(2502, "Pappa Per Erik håller tal. Foto: Harald Barth.")
+      </div>
+      <div id="images4">
+	@:image(2164, "Brudklänningen beundras. Foto: Fredrik Arnerup.")
+	@:image(1871, "Samtal på terassen. Foto: Erik Wahlström.")
+      </div>
+      <div id="images5">
+	@:image(2799, "Sångnummer med farbröderna brothers. Foto: Harald Barth.")
+	@:image(2553, "Sångnummer med familjen Kaj. Foto: Harald Barth.")
+	@:image(2776, "Måltidssång.  Kanske summavisa?  Foto: Harald Barth.")
+	@:image(1882, "Faster Elisabeth håller tal. Foto: Erik Wahlström.")
+	@:image(2385, "Välförtjänt nöjd toastmaster. Foto: Harald Barth.")
+      </div>
+    </div>
+  </body>
+</html>

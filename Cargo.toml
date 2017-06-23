@@ -1,0 +1,14 @@
+[package]
+name = "homesite"
+version = "0.1.0"
+authors = ["Rasmus Kaj <kaj@kth.se>"]
+
+build = "src/build.rs"
+
+[build-dependencies]
+ructe = { version = "^0.3.2", features = ["sass", "mime02"] }
+
+[dependencies]
+iron = "*"
+router = "*"
+mime = "0.2.6"

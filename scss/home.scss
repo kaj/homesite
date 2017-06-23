@@ -1,0 +1,57 @@
+html {
+    background: #ddd;
+    margin: 0;
+    padding: 0;
+}
+body {
+    margin: 0;
+    padding: 1em 4%;
+    text-shadow: white 1px .5px .5px;
+}
+p { margin: 1ex 0; }
+li { margin-bottom: 1ex; }
+
+@media screen and (min-width: 28em) {
+    html {
+	background: url(static-name(horizont.png)) bottom repeat-x,
+	url(static-name(moon.png)) 95% 10% no-repeat,
+	radial-gradient(500px circle at 93% 12%, #000, rgba(0,0,0,0)),
+	radial-gradient(farthest-side ellipse at bottom left, rgba(130,12,0,0.2), rgba(0,0,0,0)),
+	linear-gradient(rgba(0,0,0,0), rgba(0,0,18,1)),
+	url(static-name(stars.png)), #000;
+	color: WindowText;
+	min-height: 100%;
+    }
+    body {
+	background: #cce; color: black;
+	border: solid 2px #209;
+	margin: 5% auto;
+	width: 80%;
+	max-width: 34em;
+	border-radius: 3ex;
+	box-shadow: .3em .2em 1em black, inset 0 0 2em .6em white;
+    }
+    h1 {
+	font-size: 4.6em;
+	text-align: center;
+	margin: .1em 0 1em;
+	letter-spacing: .2em;
+	text-shadow: #aad .1ex .1ex .1ex;
+	text-transform: uppercase;
+	line-height: 1;
+    }
+    h1:before, h1:after {
+	font-size: 30%;
+	vertical-align: middle;
+	padding: .1em .8em;
+	color: #999;
+    }
+    h1:before { content: 'www.'; }
+    h1:after { content: '.se'; }
+    #k, #r, #t, #s { font-size: 60%; }
+    #k, #t { vertical-align: super; margin-right: -0.4em; }
+    #r { vertical-align: sub; }
+    #t { vertical-align: super; margin-right: -0.3em; }
+    #s { vertical-align: sub; }
+    #k, #r, #a, #t, #s { text-shadow: #e88 0.1ex 0.1ex 0.1ex; }
+}

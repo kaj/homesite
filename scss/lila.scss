@@ -1,0 +1,145 @@
+/* CSS for Katarina & Rasmus Kaj marriage web page. */
+
+@font-face {
+    font-family: 'Promocyja regular kaj';
+    src: url(static-name('promocyjaregularkaj.eot')),
+    local('☺'), url(static-name('promocyjaregularkaj.woff')) format('woff'),
+    url(static-name('promocyjaregularkaj.ttf')) format('truetype'),
+    url(static-name('promocyjaregularkaj.svg') + '\#webfontn3jMJcf9') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: rgb(248, 196, 255) url(static-name(heart.png)) 50% 7em repeat-x;
+    text-align: center;
+    text-shadow: 1px 1px 0.5px rgba(255,255,255,0.5);
+    font-family: serif;
+}
+.wrapper {
+    background: rgb(248, 196, 255);
+    background: rgba(248, 196, 255, 0.96);
+    padding: 1em .5%;
+}
+@media (min-width: 900px) {
+    .wrapper {
+        border-radius: 1ex;
+        border: solid 1px #eee;
+        box-shadow: 0 0.5em 2em white;
+        margin: 1em auto 2em;
+        max-width: 96%;
+        min-width: 860px;
+        width: 52em;
+    }
+}
+@media (min-width: 700px) {
+    .wrapper {
+        display: grid;
+        //grid-gap: 0.3em;
+        grid-template-columns: -webkit-min-content unquote('1fr') -webkit-min-content;
+        grid-template-columns: min-content unquote('1fr') min-content;
+        grid-template-rows: min-content min-content min-content unquote('1fr') min-content min-content;
+    }
+}
+
+h1, #images1, #images5 {
+    grid-column: 1 / 4;
+}
+#images2, #images3 {
+    grid-row: 3 / 6;
+}
+.thanks {
+    grid-row: 4;
+}
+#images2 {
+    grid-column: 1;
+}
+.when .thanks, #images4 {
+    grid-column: 2;
+}
+#images4 {
+    grid-row: 5;
+}
+#images3 {
+    grid-column: 3;
+}
+
+.section {
+    margin: 0;
+//    padding: 0 140px;
+//    position: relative;
+//    min-height: 570px;
+}
+h1, h2 {
+    font-family: 'Promocyja regular kaj', Promocyja, Champagne, cursive;
+    font-size-adjust: 0.27;
+    line-height: 1em;
+    text-rendering: optimizeLegibility;
+    font-weight: normal;
+    text-align: center;
+    color: #aa44aa;
+    text-shadow: -0.8px -0.8px 0.5px rgba(0,0,0,0.3), 1px 1px 1px white, 0 0 0.7em white;
+}
+h1 {
+    font-size: 4em;
+    margin: 0.3em 0 0 0;
+}
+h2 {
+    font-size: 3em;
+    margin: 1em 0 0 0;
+}
+h1 .main, h1 .sub {
+    display: block;
+}
+h1 .sub {
+    font-size: 75%;
+}
+#och {
+    font-size: 180%;
+}
+ul {
+    margin: 1em 0;
+    padding: 0;
+}
+li {
+    list-style: none;
+    margin: 0.3em;
+    padding: 0;
+}
+li:before, li:after {
+    content: '\2766';
+    margin: 0 0.5em;
+    color: #aa44aa;
+    text-shadow: -0.8px -0.8px 0.5px rgba(0,0,0,0.3), 0.8px 0.8px 0.5px rgba(255,255,255,0.8);
+}
+a.img {
+    display: inline-block;
+    margin: 0.4em 0.2em;
+
+    img {
+        background: white;
+        padding: 0.2em;
+        margin: 0;
+        border: none;
+        box-shadow: 0 0.1em 0.3em rgba(0,0,0,0.7);
+    }
+    &:hover img {
+        box-shadow: 0 0.1em 0.6em black;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+#fancybox-wrap {
+    text-shadow: none;
+}
+// TODO kratsbox.light.css should be included here and not a separate static
+// @import "kratsbox.light.css";
