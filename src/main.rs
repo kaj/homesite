@@ -12,6 +12,7 @@ fn main() {
     let mut router = Router::new();
     router.get("/", homepage, "index");
     router.get("/gifta/", married, "gifta");
+    router.get("robots.txt", robots, "robots");
     router.get("/s/:name", static_file, "static_file");
     let server = Iron::new(router).http("localhost:3000").unwrap();
     println!("Listening on {}.", server.socket);
@@ -27,6 +28,10 @@ fn married(_: &mut Request) -> IronResult<Response> {
     let mut buf = Vec::new();
     gifta(&mut buf).expect("render template");
     Ok(Response::with((status::Ok, mime!(Text / Html; Charset=Utf8), buf)))
+}
+
+fn robots(_: &mut Request) -> IronResult<Response> {
+    Ok(Response::with((status::Ok, mime!(Text / Plain), "")))
 }
 
 fn static_file(req: &mut Request) -> IronResult<Response> {
