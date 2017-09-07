@@ -141,5 +141,5 @@ a:hover {
 #fancybox-wrap {
     text-shadow: none;
 }
-// TODO kratsbox.light.css should be included here and not a separate static
-// @import "kratsbox.light.css";
+
+@import "kratsbox.scss";
