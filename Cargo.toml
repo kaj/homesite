@@ -6,9 +6,11 @@ authors = ["Rasmus Kaj <kaj@kth.se>"]
 build = "src/build.rs"
 
 [build-dependencies]
-ructe = { version = "^0.3.2", features = ["sass", "mime02"] }
+ructe = { version = "^0.3.2", features = ["sass", "mime03"] }
 
 [dependencies]
-iron = "*"
-router = "*"
-mime = "0.2.6"
+gotham = "~0.1.0"
+gotham_derive = "~0.1.0"
+hyper = "*"
+mime = "~0.3.0"
+log = "*"
