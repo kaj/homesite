@@ -1,6 +1,6 @@
+extern crate iron;
 #[macro_use]
 extern crate mime;
-extern crate iron;
 extern crate router;
 
 use iron::prelude::*;
@@ -21,13 +21,21 @@ fn main() {
 fn homepage(_: &mut Request) -> IronResult<Response> {
     let mut buf = Vec::new();
     index(&mut buf).expect("render template");
-    Ok(Response::with((status::Ok, mime!(Text / Html; Charset=Utf8), buf)))
+    Ok(Response::with((
+        status::Ok,
+        mime!(Text / Html; Charset=Utf8),
+        buf,
+    )))
 }
 
 fn married(_: &mut Request) -> IronResult<Response> {
     let mut buf = Vec::new();
     gifta(&mut buf).expect("render template");
-    Ok(Response::with((status::Ok, mime!(Text / Html; Charset=Utf8), buf)))
+    Ok(Response::with((
+        status::Ok,
+        mime!(Text / Html; Charset=Utf8),
+        buf,
+    )))
 }
 
 fn robots(_: &mut Request) -> IronResult<Response> {
@@ -41,7 +49,11 @@ fn static_file(req: &mut Request) -> IronResult<Response> {
         Ok(Response::with((status::Ok, data.mime(), data.content)))
     } else {
         println!("Static file {} not found", name);
-        Ok(Response::with((status::NotFound, mime!(Text / Plain), "not found")))
+        Ok(Response::with((
+            status::NotFound,
+            mime!(Text / Plain),
+            "not found",
+        )))
     }
 }
 
