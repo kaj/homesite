@@ -1,0 +1,16 @@
+language: rust
+rust:
+ - stable
+ - beta
+cache: cargo
+before_script:
+ - cargo update || true
+matrix:
+  include:
+   - rust: nightly
+     env: TASK=rustfmt
+     before_script:
+      - export PATH="$PATH:$HOME/.cargo/bin"
+      - CFG_RELEASE_CHANNEL=nightly cargo install -f rustfmt-nightly
+     script:
+      - cargo fmt -- --unstable-features --write-mode=diff

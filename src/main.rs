@@ -1,28 +1,30 @@
-extern crate hyper;
 extern crate gotham;
-extern crate mime;
 #[macro_use]
 extern crate gotham_derive;
+extern crate hyper;
 #[macro_use]
 extern crate log;
+extern crate mime;
 
-use gotham::middleware::pipeline::new_pipeline;
-use gotham::http::response::create_response;
-use gotham::state::{FromState, State};
-use gotham::handler::NewHandlerService;
-use gotham::router::Router;
-use gotham::router::tree::TreeBuilder;
-use gotham::router::route::dispatch::{new_pipeline_set, finalize_pipeline_set, PipelineSet, PipelineHandleChain, DispatcherImpl};
-use hyper::server::Http;
-use hyper::{Request, Response, StatusCode, Method};
-use templates::*;
-use gotham::router::tree::node::{NodeBuilder, SegmentType};
-use gotham::router::response::finalizer::ResponseFinalizerBuilder;
 use gotham::handler::NewHandler;
-use gotham::router::route::{Extractors, Route, RouteImpl, Delegation};
-use gotham::router::route::matcher::MethodOnlyRouteMatcher;
-use gotham::router::request::query_string::NoopQueryStringExtractor;
+use gotham::handler::NewHandlerService;
+use gotham::http::response::create_response;
+use gotham::middleware::pipeline::new_pipeline;
+use gotham::router::Router;
 use gotham::router::request::path::NoopPathExtractor;
+use gotham::router::request::query_string::NoopQueryStringExtractor;
+use gotham::router::response::finalizer::ResponseFinalizerBuilder;
+use gotham::router::route::{Delegation, Extractors, Route, RouteImpl};
+use gotham::router::route::dispatch::{finalize_pipeline_set, new_pipeline_set,
+                                      DispatcherImpl, PipelineHandleChain,
+                                      PipelineSet};
+use gotham::router::route::matcher::MethodOnlyRouteMatcher;
+use gotham::router::tree::TreeBuilder;
+use gotham::router::tree::node::{NodeBuilder, SegmentType};
+use gotham::state::{FromState, State};
+use hyper::{Method, Request, Response, StatusCode};
+use hyper::server::Http;
+use templates::*;
 
 fn main() {
     let addr = "127.0.0.1:3000".parse().unwrap();
