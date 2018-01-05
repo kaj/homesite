@@ -43,32 +43,40 @@ pub fn router() -> Router {
     let (ps_builder, global) = ps_builder.add(new_pipeline().build());
     let ps = finalize_pipeline_set(ps_builder);
 
-    tree_builder.add_route(static_route(vec![Method::Get, Method::Head],
-                                        || Ok(homepage),
-                                        (global, ()),
-                                        ps.clone()));
+    tree_builder.add_route(static_route(
+        vec![Method::Get, Method::Head],
+        || Ok(homepage),
+        (global, ()),
+        ps.clone(),
+    ));
 
     let mut stat = NodeBuilder::new("s", SegmentType::Static);
     let mut name = NodeBuilder::new("name", SegmentType::Dynamic);
-    name.add_route(challenge_route(vec![Method::Get, Method::Head],
-                                   || Ok(static_file),
-                                   (global, ()),
-                                   ps.clone()));
+    name.add_route(challenge_route(
+        vec![Method::Get, Method::Head],
+        || Ok(static_file),
+        (global, ()),
+        ps.clone(),
+    ));
     stat.add_child(name);
     tree_builder.add_child(stat);
 
     let mut gifta = NodeBuilder::new("gifta", SegmentType::Static);
-    gifta.add_route(static_route(vec![Method::Get, Method::Head],
-                                 || Ok(married),
-                                 (global, ()),
-                                 ps.clone()));
+    gifta.add_route(static_route(
+        vec![Method::Get, Method::Head],
+        || Ok(married),
+        (global, ()),
+        ps.clone(),
+    ));
     tree_builder.add_child(gifta);
 
     let mut robots_txt = NodeBuilder::new("robots.txt", SegmentType::Static);
-    robots_txt.add_route(static_route(vec![Method::Get, Method::Head],
-                                 || Ok(robots),
-                                 (global, ()),
-                                 ps.clone()));
+    robots_txt.add_route(static_route(
+        vec![Method::Get, Method::Head],
+        || Ok(robots),
+        (global, ()),
+        ps.clone(),
+    ));
     tree_builder.add_child(robots_txt);
 
     let tree = tree_builder.finalize();
@@ -79,21 +87,16 @@ pub fn router() -> Router {
     Router::new(tree, response_finalizer)
 }
 
-
 fn homepage(state: State, _: Request) -> (State, Response) {
     let mut buf = Vec::new();
     index(&mut buf).expect("render template");
     let res = create_response(
         &state,
         StatusCode::Ok,
-        Some((
-            buf,
-            "text/html; charset=utf-8".parse().unwrap(),
-            )),
-        );
+        Some((buf, "text/html; charset=utf-8".parse().unwrap())),
+    );
     (state, res)
 }
-
 
 fn married(state: State, _: Request) -> (State, Response) {
     let mut buf = Vec::new();
@@ -101,11 +104,8 @@ fn married(state: State, _: Request) -> (State, Response) {
     let res = create_response(
         &state,
         StatusCode::Ok,
-        Some((
-            buf,
-            "text/html; charset=utf-8".parse().unwrap(),
-            )),
-        );
+        Some((buf, "text/html; charset=utf-8".parse().unwrap())),
+    );
     (state, res)
 }
 
@@ -113,11 +113,8 @@ fn robots(state: State, _: Request) -> (State, Response) {
     let res = create_response(
         &state,
         StatusCode::Ok,
-        Some((
-            b"".to_vec(),
-            mime::TEXT_PLAIN,
-            )),
-        );
+        Some((b"".to_vec(), mime::TEXT_PLAIN)),
+    );
     (state, res)
 }
 
@@ -137,73 +134,60 @@ where
     C: PipelineHandleChain<P> + Send + Sync + 'static,
     P: Send + Sync + 'static,
 {
-    let matcher = MethodOnlyRouteMatcher::new(methods);
-    let dispatcher = DispatcherImpl::new(new_handler, active_pipelines, pipeline_set);
-
-    // Note the Route isn't simply not caring about the Request path and Query string. It will
-    // extract data from both, in a type safe way and safely deposit it into a instance of the
-    // structs shown below, ready for use by Middleware and Handlers (Usually just your handler,
-    // which is a function in your controller).
-    let extractors: Extractors<FilenameRequestPath, NoopQueryStringExtractor> = Extractors::new();
-    let route = RouteImpl::new(
-        matcher,
-        Box::new(dispatcher),
-        extractors,
+    Box::new(RouteImpl::new(
+        MethodOnlyRouteMatcher::new(methods),
+        Box::new(DispatcherImpl::new(
+            new_handler,
+            active_pipelines,
+            pipeline_set,
+        )),
+        Extractors::<FilenameRequestPath, NoopQueryStringExtractor>::new(),
         Delegation::Internal,
-    );
-    Box::new(route)
+    ))
 }
-
-fn static_file(state: State, _req: Request) -> (State, Response) {
-    let res = {
-        let params = FilenameRequestPath::borrow_from(&state);
-        if let Some(data) = statics::StaticFile::get(&params.name) {
-            create_response(&state, StatusCode::Ok,
-                            Some((data.content.to_vec(), data.mime.clone())))
-        } else {
-            println!("Static file {} not found", params.name);
-            create_response(&state, StatusCode::NotFound,
-                            Some(("not found".as_bytes().to_vec(), mime::TEXT_PLAIN)))
-        }
-    };
-    (state, res)
-}
-
-
 
 fn static_route<NH, P, C>(
     methods: Vec<Method>,
     new_handler: NH,
     active_pipelines: C,
-    ps: PipelineSet<P>,
+    pipeline_set: PipelineSet<P>,
 ) -> Box<Route + Send + Sync>
 where
     NH: NewHandler + 'static,
     C: PipelineHandleChain<P> + Send + Sync + 'static,
     P: Send + Sync + 'static,
 {
-    // Requests must have used the specified method(s) in order for this Route to match.
-    //
-    // You could define your on RouteMatcher of course.. perhaps you'd like to only match on
-    // requests that are made using the GET method and send a User-Agent header for a particular
-    // version of browser you'd like to make fun of....
-    let matcher = MethodOnlyRouteMatcher::new(methods);
-
-    // For Requests that match this Route we'll dispatch them to new_handler via the pipelines
-    // defined in active_pipelines.
-    //
-    // n.b. We also specify the set of all known pipelines in the application so the dispatcher can
-    // resolve the pipeline references provided in active_pipelines. For this application that is
-    // only the global pipeline.
-    let dispatcher = DispatcherImpl::new(new_handler, active_pipelines, ps);
-    let extractors: Extractors<NoopPathExtractor, NoopQueryStringExtractor> = Extractors::new();
-    let route = RouteImpl::new(
-        matcher,
-        Box::new(dispatcher),
-        extractors,
+    Box::new(RouteImpl::new(
+        MethodOnlyRouteMatcher::new(methods),
+        Box::new(DispatcherImpl::new(
+            new_handler,
+            active_pipelines,
+            pipeline_set,
+        )),
+        Extractors::<NoopPathExtractor, NoopQueryStringExtractor>::new(),
         Delegation::Internal,
-    );
-    Box::new(route)
+    ))
+}
+
+fn static_file(state: State, _req: Request) -> (State, Response) {
+    let res = {
+        let params = FilenameRequestPath::borrow_from(&state);
+        if let Some(data) = statics::StaticFile::get(&params.name) {
+            create_response(
+                &state,
+                StatusCode::Ok,
+                Some((data.content.to_vec(), data.mime.clone())),
+            )
+        } else {
+            println!("Static file {} not found", params.name);
+            create_response(
+                &state,
+                StatusCode::NotFound,
+                Some(("not found".as_bytes().to_vec(), mime::TEXT_PLAIN)),
+            )
+        }
+    };
+    (state, res)
 }
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));
