@@ -83,11 +83,7 @@ fn static_file(state: State) -> (State, Response) {
             )
         } else {
             println!("Static file {} not found", params.name);
-            create_response(
-                &state,
-                StatusCode::NotFound,
-                Some(("not found".as_bytes().to_vec(), mime::TEXT_PLAIN)),
-            )
+            create_response(&state, StatusCode::NotFound, None)
         }
     };
     (state, res)
