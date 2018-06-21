@@ -10,6 +10,8 @@ extern crate serde;
 extern crate serde_derive;
 extern crate env_logger;
 
+mod ructe_response;
+
 use gotham::http::response::create_response;
 use gotham::router::builder::{
     build_simple_router, DefineSingleRoute, DrawRoutes,
@@ -17,6 +19,7 @@ use gotham::router::builder::{
 use gotham::router::Router;
 use gotham::state::{FromState, State};
 use hyper::{Response, StatusCode};
+use ructe_response::RucteResponse;
 use templates::*;
 
 fn main() {
@@ -32,31 +35,17 @@ pub fn router() -> Router {
         route.get("/robots.txt").to(robots);
         route
             .get("/s/:name")
-            .with_path_extractor::<FilenameRequestPath>()
+            .with_path_extractor::<FilePath>()
             .to(static_file);
     })
 }
 
 fn homepage(state: State) -> (State, Response) {
-    let mut buf = Vec::new();
-    index(&mut buf).expect("render template");
-    let res = create_response(
-        &state,
-        StatusCode::Ok,
-        Some((buf, "text/html; charset=utf-8".parse().unwrap())),
-    );
-    (state, res)
+    state.html(index)
 }
 
 fn married(state: State) -> (State, Response) {
-    let mut buf = Vec::new();
-    gifta(&mut buf).expect("render template");
-    let res = create_response(
-        &state,
-        StatusCode::Ok,
-        Some((buf, "text/html; charset=utf-8".parse().unwrap())),
-    );
-    (state, res)
+    state.html(gifta)
 }
 
 fn robots(state: State) -> (State, Response) {
@@ -69,21 +58,21 @@ fn robots(state: State) -> (State, Response) {
 }
 
 #[derive(Deserialize, StateData, StaticResponseExtender)]
-pub struct FilenameRequestPath {
+pub struct FilePath {
     pub name: String,
 }
 
 fn static_file(state: State) -> (State, Response) {
     let res = {
-        let params = FilenameRequestPath::borrow_from(&state);
-        if let Some(data) = statics::StaticFile::get(&params.name) {
+        let FilePath { ref name } = FilePath::borrow_from(&state);
+        if let Some(data) = statics::StaticFile::get(&name) {
             create_response(
                 &state,
                 StatusCode::Ok,
                 Some((data.content.to_vec(), data.mime.clone())),
             )
         } else {
-            info!("Static file {} not found", params.name);
+            info!("Static file {} not found", name);
             create_response(&state, StatusCode::NotFound, None)
         }
     };
