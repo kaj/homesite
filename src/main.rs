@@ -8,6 +8,7 @@ extern crate mime;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate env_logger;
 
 use gotham::http::response::create_response;
 use gotham::router::builder::{
@@ -19,8 +20,8 @@ use hyper::{Response, StatusCode};
 use templates::*;
 
 fn main() {
+    env_logger::init();
     let addr = "127.0.0.1:3000";
-    println!("Listening on http://{}/", addr);
     gotham::start(addr, router())
 }
 
@@ -82,7 +83,7 @@ fn static_file(state: State) -> (State, Response) {
                 Some((data.content.to_vec(), data.mime.clone())),
             )
         } else {
-            println!("Static file {} not found", params.name);
+            info!("Static file {} not found", params.name);
             create_response(&state, StatusCode::NotFound, None)
         }
     };
