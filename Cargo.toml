@@ -9,8 +9,10 @@ build = "src/build.rs"
 ructe = { version = "^0.3.6", features = ["sass", "mime03"] }
 
 [dependencies]
-gotham = "~0.1.0"
-gotham_derive = "~0.1.0"
-hyper = "*"
+gotham = "~0.2.0"
+gotham_derive = "~0.2.0"
+hyper = "~0.11.27" # Must match gotham dependency
+serde = "~1.0.66"  # Must match gotham dependency
+serde_derive = "~1.0.66"  # Must match gotham dependency
 mime = "~0.3.0"
 log = "*"
