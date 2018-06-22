@@ -1,60 +1,82 @@
-extern crate iron;
+extern crate gotham;
 #[macro_use]
+extern crate gotham_derive;
+extern crate hyper;
+#[macro_use]
+extern crate log;
 extern crate mime;
-extern crate router;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate env_logger;
 
-use iron::prelude::*;
-use iron::status;
-use router::Router;
+mod ructe_response;
+
+use gotham::http::response::create_response;
+use gotham::router::builder::{
+    build_simple_router, DefineSingleRoute, DrawRoutes,
+};
+use gotham::router::Router;
+use gotham::state::{FromState, State};
+use hyper::{Response, StatusCode};
+use ructe_response::RucteResponse;
 use templates::*;
 
 fn main() {
-    let mut router = Router::new();
-    router.get("/", homepage, "index");
-    router.get("/gifta/", married, "gifta");
-    router.get("robots.txt", robots, "robots");
-    router.get("/s/:name", static_file, "static_file");
-    let server = Iron::new(router).http("localhost:3000").unwrap();
-    println!("Listening on {}.", server.socket);
+    env_logger::init();
+    let addr = "127.0.0.1:3000";
+    gotham::start(addr, router())
 }
 
-fn homepage(_: &mut Request) -> IronResult<Response> {
-    let mut buf = Vec::new();
-    index(&mut buf).expect("render template");
-    Ok(Response::with((
-        status::Ok,
-        mime!(Text / Html; Charset=Utf8),
-        buf,
-    )))
+pub fn router() -> Router {
+    build_simple_router(|route| {
+        route.get("/").to(homepage);
+        route.get("/gifta").to(married);
+        route.get("/robots.txt").to(robots);
+        route
+            .get("/s/:name")
+            .with_path_extractor::<FilePath>()
+            .to(static_file);
+    })
 }
 
-fn married(_: &mut Request) -> IronResult<Response> {
-    let mut buf = Vec::new();
-    gifta(&mut buf).expect("render template");
-    Ok(Response::with((
-        status::Ok,
-        mime!(Text / Html; Charset=Utf8),
-        buf,
-    )))
+fn homepage(state: State) -> (State, Response) {
+    state.html(index)
 }
 
-fn robots(_: &mut Request) -> IronResult<Response> {
-    Ok(Response::with((status::Ok, mime!(Text / Plain), "")))
+fn married(state: State) -> (State, Response) {
+    state.html(gifta)
 }
 
-fn static_file(req: &mut Request) -> IronResult<Response> {
-    let router = req.extensions.get::<Router>().expect("router");
-    let name = router.find("name").expect("name");
-    if let Some(data) = statics::StaticFile::get(name) {
-        Ok(Response::with((status::Ok, data.mime(), data.content)))
-    } else {
-        println!("Static file {} not found", name);
-        Ok(Response::with((
-            status::NotFound,
-            mime!(Text / Plain),
-            "not found",
-        )))
-    }
+fn robots(state: State) -> (State, Response) {
+    let res = create_response(
+        &state,
+        StatusCode::Ok,
+        Some((b"".to_vec(), mime::TEXT_PLAIN)),
+    );
+    (state, res)
+}
+
+#[derive(Deserialize, StateData, StaticResponseExtender)]
+pub struct FilePath {
+    pub name: String,
+}
+
+fn static_file(state: State) -> (State, Response) {
+    let res = {
+        let FilePath { ref name } = FilePath::borrow_from(&state);
+        if let Some(data) = statics::StaticFile::get(&name) {
+            create_response(
+                &state,
+                StatusCode::Ok,
+                Some((data.content.to_vec(), data.mime.clone())),
+            )
+        } else {
+            info!("Static file {} not found", name);
+            create_response(&state, StatusCode::NotFound, None)
+        }
+    };
+    (state, res)
 }
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));

@@ -6,9 +6,15 @@ authors = ["Rasmus Kaj <kaj@kth.se>"]
 build = "src/build.rs"
 
 [build-dependencies]
-ructe = { version = "^0.3.6", features = ["sass", "mime02"] }
+ructe = { version = "^0.3.6", features = ["sass", "mime03"] }
+failure = "*"
 
 [dependencies]
-iron = "0.6.0"
-router = "0.6.0"
-mime = "0.2.6"
+gotham = "~0.2.0"
+gotham_derive = "~0.2.0"
+hyper = "~0.11.27" # Must match gotham dependency
+serde = "~1.0.66"  # Must match gotham dependency
+serde_derive = "~1.0.66"  # Must match gotham dependency
+mime = "~0.3.0"
+log = "*"
+env_logger = "*"

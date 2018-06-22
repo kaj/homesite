@@ -9,8 +9,5 @@ matrix:
   include:
    - rust: nightly
      env: TASK=rustfmt
-     before_script:
-      - export PATH="$PATH:$HOME/.cargo/bin"
-      - CFG_RELEASE_CHANNEL=nightly cargo install -f rustfmt-nightly
-     script:
-      - cargo fmt -- --unstable-features --write-mode=diff
+     before_script: rustup component add rustfmt-preview
+     script: cargo fmt -- --check
