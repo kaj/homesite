@@ -9,6 +9,8 @@ mod render_ructe;
 
 use chrono::{Duration, Utc};
 use render_ructe::RenderRucte;
+use std::env::var;
+use std::net::SocketAddr;
 use templates::statics::StaticFile;
 use warp::http::{Response, StatusCode};
 use warp::{path, reject, Filter, Rejection, Reply};
@@ -22,7 +24,15 @@ fn main() {
             .or(path("robots.txt").map(robots))
             .or(path("s").and(path::param()).and_then(static_file)),
     );
-    warp::serve(router.recover(customize_error)).run(([127, 0, 0, 1], 3030));
+    let addr = var("HOMESITE_ADDR")
+        .ok()
+        .and_then(|addr| {
+            addr.parse::<SocketAddr>()
+                .map_err(|e| error!("Bad address {:?}: {}", addr, e))
+                .ok()
+        }).unwrap_or_else(|| ([127, 0, 0, 1], 3030).into());
+    info!("Homesite listening on {}", addr);
+    warp::serve(router.recover(customize_error)).run(addr);
 }
 
 fn homepage() -> Result<impl Reply, Rejection> {
@@ -47,7 +57,7 @@ fn static_file(name: String) -> Result<impl Reply, Rejection> {
             .header("expires", far_expires.to_rfc2822())
             .body(data.content))
     } else {
-        info!("Static file {} not found", name);
+        debug!("Static file {} not found", name);
         Err(reject::not_found())
     }
 }
