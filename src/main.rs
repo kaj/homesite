@@ -1,13 +1,14 @@
-extern crate warp;
+extern crate chrono;
+extern crate env_logger;
+#[macro_use]
 extern crate log;
 extern crate mime;
-extern crate env_logger;
-extern crate chrono;
+extern crate warp;
 
 mod render_ructe;
 
+use chrono::{Duration, Utc};
 use render_ructe::RenderRucte;
-use chrono::{Utc, Duration};
 use templates::statics::StaticFile;
 use warp::http::{Response, StatusCode};
 use warp::{path, reject, Filter, Rejection, Reply};
@@ -16,10 +17,10 @@ fn main() {
     env_logger::init();
 
     let router = warp::get2().and(
-        warp::index().and_then(homepage)
+        (warp::index().and_then(homepage))
             .or(path("gifta").and_then(married))
             .or(path("robots.txt").map(robots))
-            .or(path("s").and(path::param()).and_then(static_file))
+            .or(path("s").and(path::param()).and_then(static_file)),
     );
     warp::serve(router.recover(customize_error)).run(([127, 0, 0, 1], 3030));
 }
@@ -46,7 +47,7 @@ fn static_file(name: String) -> Result<impl Reply, Rejection> {
             .header("expires", far_expires.to_rfc2822())
             .body(data.content))
     } else {
-        println!("Static file {} not found", name);
+        info!("Static file {} not found", name);
         Err(reject::not_found())
     }
 }
@@ -55,7 +56,7 @@ fn static_file(name: String) -> Result<impl Reply, Rejection> {
 fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
     match err.status() {
         StatusCode::NOT_FOUND => {
-            eprintln!("Got a 404: {:?}", err);
+            debug!("Got a 404: {:?}", err);
             // We have a custom 404 page!
             Response::builder().status(StatusCode::NOT_FOUND).html(|o| {
                 templates::error(
@@ -66,7 +67,7 @@ fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
             })
         }
         code => {
-            eprintln!("Got a {}: {:?}", code.as_u16(), err);
+            error!("Got a {}: {:?}", code.as_u16(), err);
             Response::builder()
                 .status(code)
                 .html(|o| templates::error(o, code, "Something went wrong."))
