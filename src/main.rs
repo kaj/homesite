@@ -5,21 +5,19 @@ extern crate log;
 extern crate mime;
 extern crate warp;
 
-mod render_ructe;
-
 use chrono::{Duration, Utc};
-use render_ructe::RenderRucte;
 use std::env::var;
 use std::net::SocketAddr;
 use templates::statics::StaticFile;
+use templates::RenderRucte;
 use warp::http::{Response, StatusCode};
-use warp::{path, reject, Filter, Rejection, Reply};
+use warp::{path, reject::not_found, Filter, Rejection, Reply};
 
 fn main() {
     env_logger::init();
 
     let router = warp::get2().and(
-        (warp::index().and_then(homepage))
+        (path::end().and_then(homepage))
             .or(path("gifta").and_then(married))
             .or(path("robots.txt").map(robots))
             .or(path("s").and(path::param()).and_then(static_file)),
@@ -59,7 +57,7 @@ fn static_file(name: String) -> Result<impl Reply, Rejection> {
             .body(data.content))
     } else {
         debug!("Static file {} not found", name);
-        Err(reject::not_found())
+        Err(not_found())
     }
 }
 
