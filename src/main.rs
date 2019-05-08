@@ -1,15 +1,8 @@
-extern crate chrono;
-extern crate env_logger;
-#[macro_use]
-extern crate log;
-extern crate mime;
-extern crate warp;
-
+use crate::templates::statics::StaticFile;
+use crate::templates::RenderRucte;
 use chrono::{Duration, Utc};
 use std::env::var;
 use std::net::SocketAddr;
-use templates::statics::StaticFile;
-use templates::RenderRucte;
 use warp::http::{Response, StatusCode};
 use warp::{path, reject::not_found, Filter, Rejection, Reply};
 
@@ -26,11 +19,11 @@ fn main() {
         .ok()
         .and_then(|addr| {
             addr.parse::<SocketAddr>()
-                .map_err(|e| error!("Bad address {:?}: {}", addr, e))
+                .map_err(|e| log::error!("Bad address {:?}: {}", addr, e))
                 .ok()
         })
         .unwrap_or_else(|| ([127, 0, 0, 1], 3030).into());
-    info!("Homesite listening on {}", addr);
+    log::info!("Homesite listening on {}", addr);
     warp::serve(router.recover(customize_error)).run(addr);
 }
 
@@ -56,7 +49,7 @@ fn static_file(name: String) -> Result<impl Reply, Rejection> {
             .header("expires", far_expires.to_rfc2822())
             .body(data.content))
     } else {
-        debug!("Static file {} not found", name);
+        log::debug!("Static file {} not found", name);
         Err(not_found())
     }
 }
@@ -65,7 +58,7 @@ fn static_file(name: String) -> Result<impl Reply, Rejection> {
 fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
     match err.status() {
         StatusCode::NOT_FOUND => {
-            debug!("Got a 404: {:?}", err);
+            log::debug!("Got a 404: {:?}", err);
             // We have a custom 404 page!
             Response::builder().status(StatusCode::NOT_FOUND).html(|o| {
                 templates::error(
@@ -76,7 +69,7 @@ fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
             })
         }
         code => {
-            error!("Got a {}: {:?}", code.as_u16(), err);
+            log::error!("Got a {}: {:?}", code.as_u16(), err);
             Response::builder()
                 .status(code)
                 .html(|o| templates::error(o, code, "Something went wrong."))

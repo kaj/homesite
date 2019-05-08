@@ -1,6 +1,3 @@
-extern crate failure;
-extern crate ructe;
-
 use ructe::{Ructe, RucteError};
 
 fn main() -> Result<(), RucteError> {
