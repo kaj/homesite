@@ -30,7 +30,8 @@ fn main() {
             addr.parse::<SocketAddr>()
                 .map_err(|e| error!("Bad address {:?}: {}", addr, e))
                 .ok()
-        }).unwrap_or_else(|| ([127, 0, 0, 1], 3030).into());
+        })
+        .unwrap_or_else(|| ([127, 0, 0, 1], 3030).into());
     info!("Homesite listening on {}", addr);
     warp::serve(router.recover(customize_error)).run(addr);
 }
