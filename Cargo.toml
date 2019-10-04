@@ -7,7 +7,6 @@ build = "src/build.rs"
 
 [build-dependencies]
 ructe = { version = "0.7.2", features = ["sass", "mime03", "warp"] }
-failure = "*"
 
 [dependencies]
 warp = "0.1.15"
