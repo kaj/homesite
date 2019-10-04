@@ -28,10 +28,10 @@ fn main() {
 }
 
 fn homepage() -> Result<impl Reply, Rejection> {
-    Response::builder().html(templates::index)
+    Response::builder().html(|out| templates::index(out))
 }
 fn married() -> Result<impl Reply, Rejection> {
-    Response::builder().html(templates::gifta)
+    Response::builder().html(|out| templates::gifta(out))
 }
 fn robots() -> impl Reply {
     ""
