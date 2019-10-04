@@ -1,4 +1,4 @@
-@use templates::statics::home_css;
+@use super::statics::home_css;
 
 @()
 
@@ -10,8 +10,9 @@
     <link rel="stylesheet" type="text/css" href="/s/@home_css.name"/>
   </head>
   <body>
+    <main>
     <p><em>Välkommen till</em></p>
-    <h1><span id="k">k</span><span id="r">r</span><span id="a">a</span><span id="t">t</span><span id="s">s</span></h1>
+    <h1 id="krats">krats</h1>
 
     <p>Här, i <a href="/gifta/">Katarinas &amp; Rasmus</a> virtuella
     hem, kan du hitta:</p>
@@ -30,5 +31,6 @@
       <li><a href="http://www.albumforlaget.se/">Albumförlaget</a>
 	– webben är gjord av Rasmus.</li>
     </ul>
+    </main>
   </body>
 </html>

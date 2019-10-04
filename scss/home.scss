@@ -1,57 +1,97 @@
-html {
-    background: #ddd;
+html, body {
     margin: 0;
     padding: 0;
 }
+
 body {
-    margin: 0;
-    padding: 1em 4%;
-    text-shadow: white 1px .5px .5px;
+    background: left bottom / auto 9% repeat-x url(static-name(grass.svg)) fixed,
+		82% 96% / 5vh auto no-repeat url(static-name(btfl.svg)) fixed,
+		center bottom / auto 10% repeat-x url(static-name(grass.svg)) fixed,
+		right bottom / auto 11% repeat-x url(static-name(grass.svg)) fixed,
+		10% 90% / 8vh auto no-repeat url(static-name(btfl.svg)) fixed,
+		linear-gradient(#519dd2, #7ec0ec) fixed;
+    line-height: 1.4;
+    padding: 1ex;
 }
-p { margin: 1ex 0; }
-li { margin-bottom: 1ex; }
+
+main {
+    padding: 2ex 3ex;
+    margin: 1em auto;
+    max-width: 37em;
+    background: white;
+    border-radius: 1em;
+    position: relative;
+}
 
 @media screen and (min-width: 28em) {
-    html {
-	background: url(static-name(horizont.png)) bottom repeat-x,
-	url(static-name(moon.png)) 95% 10% no-repeat,
-	radial-gradient(500px circle at 93% 12%, #000, rgba(0,0,0,0)),
-	radial-gradient(farthest-side ellipse at bottom left, rgba(130,12,0,0.2), rgba(0,0,0,0)),
-	linear-gradient(rgba(0,0,0,0), rgba(0,0,18,1)),
-	url(static-name(stars.png)), #000;
-	color: WindowText;
-	min-height: 100%;
-    }
     body {
-	background: #cce; color: black;
-	border: solid 2px #209;
-	margin: 5% auto;
-	width: 80%;
-	max-width: 34em;
-	border-radius: 3ex;
-	box-shadow: .3em .2em 1em black, inset 0 0 2em .6em white;
+	padding: 8vh 7vw 10vh 7vw;
     }
-    h1 {
-	font-size: 4.6em;
+    main {
+	&:before, &:after {
+	    content: url(static-name(cloud.svg));
+	    display: block;
+	    position: absolute;
+	    z-index: -1;
+	}
+	&:before {
+	    width: 52%;
+	    top: -7vh;
+	    left: -7%;
+	}
+	&:after {
+	    width: 30%;
+	    top: -6vh;
+	    right: -4%;
+	}
+    }
+
+    h1#krats {
+	margin-right: 15%;
 	text-align: center;
-	margin: .1em 0 1em;
-	letter-spacing: .2em;
-	text-shadow: #aad .1ex .1ex .1ex;
-	text-transform: uppercase;
-	line-height: 1;
-    }
-    h1:before, h1:after {
-	font-size: 30%;
 	vertical-align: middle;
-	padding: .1em .8em;
-	color: #999;
+
+	&:before, &:after {
+	    font-size: 60%;
+	    opacity: .3;
+	    vertical-align: middle;
+	}
+	&:before { content: 'www.'; }
+	&:after { content: '.se'; }
     }
-    h1:before { content: 'www.'; }
-    h1:after { content: '.se'; }
-    #k, #r, #t, #s { font-size: 60%; }
-    #k, #t { vertical-align: super; margin-right: -0.4em; }
-    #r { vertical-align: sub; }
-    #t { vertical-align: super; margin-right: -0.3em; }
-    #s { vertical-align: sub; }
-    #k, #r, #a, #t, #s { text-shadow: #e88 0.1ex 0.1ex 0.1ex; }
+}
+
+h1 {
+    letter-spacing: .2em;
+}
+
+footer {
+    background: #84ff5e;
+    border-radius: 1em 0 0;
+    bottom: 0;
+    padding: 0 1em;
+    position: fixed;
+    right: 0;
+}
+
+h1 {
+    margin: 0 0 1ex;
+}
+p {
+    margin: 0 0 1em;
+}
+
+.error {
+    body {
+	background: left bottom / auto 9% repeat-x url(static-name(grass.svg)) fixed,
+		    82% 98% / 5vh auto no-repeat url(static-name(btfl.svg)) fixed,
+		    10% 97% / 6vh auto no-repeat url(static-name(btfl.svg)) fixed,
+		    right bottom / auto 11% repeat-x url(static-name(grass.svg)) fixed,
+		    linear-gradient(#89a, #568) fixed;
+    }
+    main {
+	background: linear-gradient(#fff, #fff, #eee, #ccc, #888) padding-box;
+	border: solid 1px rgba(white, 0.3);
+	border-width: 0 2px 2px 1px;
+    }
 }

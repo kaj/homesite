@@ -2,19 +2,15 @@
 name = "homesite"
 version = "0.1.0"
 authors = ["Rasmus Kaj <kaj@kth.se>"]
-
+edition = "2018"
 build = "src/build.rs"
 
 [build-dependencies]
-ructe = { version = "^0.3.6", features = ["sass", "mime03"] }
-failure = "*"
+ructe = { version = "0.7.2", features = ["sass", "mime03", "warp"] }
 
 [dependencies]
-gotham = "~0.2.0"
-gotham_derive = "~0.2.0"
-hyper = "~0.11.27" # Must match gotham dependency
-serde = "~1.0.66"  # Must match gotham dependency
-serde_derive = "~1.0.66"  # Must match gotham dependency
-mime = "~0.3.0"
+warp = "0.1.15"
+mime = "0.3.0"
 log = "*"
 env_logger = "*"
+chrono = "*"
