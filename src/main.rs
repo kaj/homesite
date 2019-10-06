@@ -1,80 +1,80 @@
-use crate::templates::statics::StaticFile;
-use crate::templates::RenderRucte;
-use chrono::{Duration, Utc};
-use std::env::var;
-use std::net::SocketAddr;
-use warp::http::{Response, StatusCode};
-use warp::{path, reject::not_found, Filter, Rejection, Reply};
+use crate::templates::statics::STATICS;
+use brotli::enc::backward_references::BrotliEncoderParams;
+use brotli::BrotliCompress;
+use flate2::{Compression, GzBuilder};
+use http::StatusCode;
+use std::error::Error;
+use std::fs::{create_dir_all, File};
+use std::io::Write;
+use std::path::Path;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     env_logger::init();
 
-    let router = warp::get2().and(
-        (path::end().and_then(homepage))
-            .or(path("gifta").and_then(married))
-            .or(path("robots.txt").map(robots))
-            .or(path("s").and(path::param()).and_then(static_file)),
-    );
-    let addr = var("HOMESITE_ADDR")
-        .ok()
-        .and_then(|addr| {
-            addr.parse::<SocketAddr>()
-                .map_err(|e| log::error!("Bad address {:?}: {}", addr, e))
-                .ok()
-        })
-        .unwrap_or_else(|| ([127, 0, 0, 1], 3030).into());
-    log::info!("Homesite listening on {}", addr);
-    warp::serve(router.recover(customize_error)).run(addr);
-}
-
-fn homepage() -> Result<impl Reply, Rejection> {
-    Response::builder().html(|out| templates::index(out))
-}
-fn married() -> Result<impl Reply, Rejection> {
-    Response::builder().html(|out| templates::gifta(out))
-}
-fn robots() -> impl Reply {
-    ""
-}
-
-/// Handler for static files.
-/// Create a response from the file data with a correct content type
-/// and a far expires header (or a 404 if the file does not exist).
-fn static_file(name: String) -> Result<impl Reply, Rejection> {
-    if let Some(data) = StaticFile::get(&name) {
-        let far_expires = Utc::now() + Duration::days(180);
-        Ok(Response::builder()
-            .status(StatusCode::OK)
-            .header("content-type", data.mime.as_ref())
-            .header("expires", far_expires.to_rfc2822())
-            .body(data.content))
-    } else {
-        log::debug!("Static file {} not found", name);
-        Err(not_found())
+    let out_dir: &Path = "public".as_ref();
+    create_dir_all(out_dir)?;
+    File::create(out_dir.join("robots.txt"))?;
+    {
+        let mut f = File::create(out_dir.join("index.html"))?;
+        templates::index(&mut f)?;
     }
-}
-
-/// Create custom error pages.
-fn customize_error(err: Rejection) -> Result<impl Reply, Rejection> {
-    match err.status() {
-        StatusCode::NOT_FOUND => {
-            log::debug!("Got a 404: {:?}", err);
-            // We have a custom 404 page!
-            Response::builder().status(StatusCode::NOT_FOUND).html(|o| {
-                templates::error(
-                    o,
-                    StatusCode::NOT_FOUND,
-                    "The resource you requested could not be located.",
-                )
-            })
+    {
+        let gifta = out_dir.join("gifta");
+        create_dir_all(&gifta)?;
+        let mut f = File::create(gifta.join("index.html"))?;
+        templates::gifta(&mut f)?;
+    }
+    let dir = out_dir.join("s");
+    for s in STATICS {
+        println!("Handle {:?}", s.name);
+        // s.name may contain directory components.
+        if let Some(parent) = dir.join(s.name).parent() {
+            create_dir_all(parent)?;
         }
-        code => {
-            log::error!("Got a {}: {:?}", code.as_u16(), err);
-            Response::builder()
-                .status(code)
-                .html(|o| templates::error(o, code, "Something went wrong."))
+        File::create(dir.join(s.name))
+            .and_then(|mut f| f.write(s.content))?;
+
+        let limit = s.content.len() - 10; // Compensate a few bytes overhead
+        let gz = gzipped(s.content)?;
+        if gz.len() < limit {
+            File::create(dir.join(format!("{}.gz", s.name)))
+                .and_then(|mut f| f.write(&gz))?;
+        }
+        let br = brcompressed(s.content)?;
+        if br.len() < limit {
+            File::create(dir.join(format!("{}.br", s.name)))
+                .and_then(|mut f| f.write(&br))?;
         }
     }
+    {
+        let code = StatusCode::NOT_FOUND;
+        let mut f =
+            File::create(out_dir.join(format!("{}.html", code.as_u16())))?;
+        templates::error(
+            &mut f,
+            code,
+            "The resource you requested could not be located.",
+        )?;
+    }
+    Ok(())
+}
+
+fn gzipped(data: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+    let mut buf = Vec::new();
+    {
+        let mut gz = GzBuilder::new().write(&mut buf, Compression::best());
+        gz.write_all(data)?;
+        gz.finish()?;
+    }
+    Ok(buf)
+}
+
+fn brcompressed(data: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
+    let mut buf = Vec::new();
+    let mut params = BrotliEncoderParams::default();
+    params.quality = 11;
+    BrotliCompress(&mut data.as_ref(), &mut buf, &params)?;
+    Ok(buf)
 }
 
 include!(concat!(env!("OUT_DIR"), "/templates.rs"));

@@ -6,11 +6,11 @@ edition = "2018"
 build = "src/build.rs"
 
 [build-dependencies]
-ructe = { version = "0.7.2", features = ["sass", "mime03", "warp"] }
+ructe = { version = "0.7.2", features = ["sass"] }
 
 [dependencies]
-warp = "0.1.15"
-mime = "0.3.0"
+http = "*"
 log = "*"
 env_logger = "*"
-chrono = "*"
+brotli = "*"
+flate2 = "*"
