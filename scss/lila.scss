@@ -51,6 +51,9 @@ h1, #images1, #images5 {
 }
 #images2, #images3 {
     grid-row: 3 / 6;
+    img {
+	max-width: calc(32vw - 1em);
+    }
 }
 .thanks {
     grid-row: 4;
@@ -126,6 +129,7 @@ a.img {
         margin: 0;
         border: none;
         box-shadow: 0 0.1em 0.3em rgba(0,0,0,0.7);
+	max-width: calc(49vw - 1em);
     }
     &:hover img {
         box-shadow: 0 0.1em 0.6em black;
