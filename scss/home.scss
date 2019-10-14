@@ -23,6 +23,31 @@ main {
     position: relative;
 }
 
+@media (prefers-color-scheme: dark) {
+    body {
+	background: linear-gradient(rgb(0, 0, 60), rgba(40,0,0,0.8)) fixed,
+		    left bottom / auto 9% repeat-x url(static-name(grass.svg)) fixed,
+		    black;
+	color: #eee;
+	main {
+	    background: black;
+	    color: #eee;
+	    &:before {
+		display: none;
+	    }
+	    &:after {
+		content: url(static-name(moon.png));
+		width: auto;
+		right: calc(2em - 15vw);
+		opacity: 0.6;
+	    }
+	    :link, :visited {
+		color: #edf;
+	    }
+	}
+    }
+}
+
 @media screen and (min-width: 28em) {
     body {
 	padding: 8vh 7vw 10vh 7vw;
