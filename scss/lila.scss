@@ -147,3 +147,44 @@ a:hover {
 }
 
 @import "kratsbox.scss";
+
+@media (prefers-color-scheme: dark) {
+    body {
+	background-color: #000;
+	text-shadow: 1px 1px .5px rgba(#000, 0.5);
+	color: #a4a;
+    }
+    .wrapper {
+	background: rgba(48,0,32,0.94);
+    }
+    @media (min-width: 900px) {
+	.wrapper {
+	    border: solid 1px rgba(#a4a, 0.4);
+	    box-shadow: 0 .5em 2em #a4a;
+	}
+    }
+
+    a.img {
+	opacity: 0.4;
+	&:hover {
+	    opacity: 1;
+	}
+	img {
+	    background: rgba(#a4a, 0.4);
+	    box-shadow: none;
+	}
+    }
+
+    :link, :visited {
+	color: #d6f;
+    }
+
+    #kratsbox {
+	background: rgba(#000, 0.6);
+	text-shadow: none;
+
+	div, .prev .extra:hover::before, .next .extra:hover::before {
+	    background: #878;
+	}
+    }
+}
