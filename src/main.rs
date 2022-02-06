@@ -71,8 +71,10 @@ fn gzipped(data: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
 
 fn brcompressed(data: &[u8]) -> Result<Vec<u8>, Box<dyn Error>> {
     let mut buf = Vec::new();
-    let mut params = BrotliEncoderParams::default();
-    params.quality = 11;
+    let params = BrotliEncoderParams {
+        quality: 11,
+        ..Default::default()
+    };
     BrotliCompress(&mut data.as_ref(), &mut buf, &params)?;
     Ok(buf)
 }
