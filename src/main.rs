@@ -16,13 +16,13 @@ fn main() -> Result<(), Box<dyn Error>> {
     File::create(out_dir.join("robots.txt"))?;
     {
         let mut f = File::create(out_dir.join("index.html"))?;
-        templates::index(&mut f)?;
+        templates::index_html(&mut f)?;
     }
     {
         let gifta = out_dir.join("gifta");
         create_dir_all(&gifta)?;
         let mut f = File::create(gifta.join("index.html"))?;
-        templates::gifta(&mut f)?;
+        templates::gifta_html(&mut f)?;
     }
     let dir = out_dir.join("s");
     for s in STATICS {
@@ -50,7 +50,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let code = StatusCode::NOT_FOUND;
         let mut f =
             File::create(out_dir.join(format!("{}.html", code.as_u16())))?;
-        templates::error(
+        templates::error_html(
             &mut f,
             code,
             "The resource you requested could not be located.",
