@@ -1,16 +1,17 @@
 [package]
 name = "homesite"
-version = "0.1.0"
 authors = ["Rasmus Kaj <kaj@kth.se>"]
-edition = "2018"
+version = "0.1.0"
+edition = "2021"
+
 build = "src/build.rs"
 
 [build-dependencies]
-ructe = { version = "0.16.1", features = ["sass"] }
+ructe = { version = "0.17.0", features = ["sass"] }
 
 [dependencies]
-brotli = "3.3.4"
-env_logger = "0.10.0"
-flate2 = "1.0.25"
-http = "0.2.8"
-log = "0.4.17"
+brotli = "3.4.0"
+env_logger = "0.11.1"
+flate2 = "1.0.28"
+http = "1.0.0"
+log = "0.4.20"
